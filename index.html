@@ -6,9 +6,15 @@
     <title>Document</title>
   </head>
   <body>
-    <form name="test" action="http://localhost:3000" method="POST">
+    <form
+      name="test"
+      action="http://localhost:3000/api/upload"
+      method="POST"
+      enctype="multipart/form-data"
+    >
       <label for="name">Image:</label>
       <input type="file" id="image" name="image" />
+      <button type="submit">Upload</button>
     </form>
   </body>
 </html>

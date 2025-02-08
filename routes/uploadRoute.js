@@ -5,14 +5,7 @@ import { downloadFile, uploadFile } from "../controllers/uploadController.js";
 const router = express.Router();
 
 // Multer configuration for file upload to disk storage  (uploads/ folder)
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
@@ -31,13 +24,13 @@ const upload = multer({
 // Upload route for single file upload (test) with multer middleware
 router.post("/upload", upload.single("image"), uploadFile);
 
-// Upload route for multiple file upload (tests) with multer middleware
-router.post("/upload/multiple", upload.array("image", 3), (req, res) => {
-  console.log(req.body);
-  res.send(req.files);
-});
+// // Upload route for multiple file upload (tests) with multer middleware
+// router.post("/upload/multiple", upload.array("image", 3), (req, res) => {
+//   console.log(req.body);
+//   res.send(req.files);
+// });
 
 // Download route to download a file from the server (uploads/ folder)  (test.jpg)  (test.png)
-router.get("/download/:file", downloadFile);
+router.get("/download/:id", downloadFile);
 
 export default router;
