@@ -35,6 +35,8 @@ const downloadFile = async (req, res) => {
     res.set({
       "Content-Type": file.contentType,
       "Content-Length": file.size,
+      // download the file with the original name
+      "Content-Disposition": `attachment; filename="${file.filename}"`,
     });
     res.send(file.data);
   } catch (error) {
