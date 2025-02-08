@@ -1,6 +1,4 @@
 import express from "express";
-import connectDB from "./db/conn.js";
-import userRoute from "./routes/userRoute.js";
 import { createUser } from "../controllers/userController.js";
 
 const router = express.Router();
