@@ -1,25 +1,60 @@
 import User from "../models/userModel.js";
 
+const storage = multer.memoryStorage();
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  },
+}).single("profileImage");
+
 const createUser = async (req, res) => {
+  // Multer configuration for file upload to disk storage  (uploads/ folder)
   try {
-    if (!req.body) {
-      return res.status(400).send({ message: "Content can not be empty!" });
-    }
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).send({ message: err.message });
+      }
 
-    const user = new User(req.body);
-
-    const emailExist = await User.findOne({
-      email: req.body.email,
+      const emailExist = await User.findOne({
+        email: req.body.email,
+      });
+      if (emailExist) {
+        return res.status(400).send({ message: "Email already exists" });
+      }
+      const hashedPassword = passwordHasher(req.body.password);
+      
+      const user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        password: hashedPassword,
+        profileImage: {
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+          uploadedAt: new Date(),
+        },
+      }); // Create a new user instance with the request data
+      const savedUser = await user.save();
+      res.status(201).json({
+        message: "User created successfully",
+        data: {
+            _id: savedUser._id,
+            name: savedUser.name,
+            email: savedUser.email,
+            profileImage: savedUser.profileImage,
+        },
+      });
     });
-    if (emailExist) {
-      return res.status(400).send({ message: "Email already exists" });
-    }
-    const hashedPassword = passwordHasher(req.body.password);
-    user.password = hashedPassword;
-    await user.save();
-    res.status(201).json(user);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

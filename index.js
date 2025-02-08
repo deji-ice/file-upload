@@ -1,6 +1,6 @@
 import express from "express";
 import connectDB from "./db/conn.js";
-import uploadRoute from "./routes/uploadRoute.js";
+import userRoute from "./routes/userRoute.js";
 
 const app = express();
 const port = 3000;
@@ -16,8 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (_req, res) => {
   res.send("Hello World!");
 });
-// Use the uploadRoute for all routes starting with /api (uploadRoute.js)
-app.use("/api", uploadRoute);
+// Use the userRoute for all routes starting with /api (uploadRoute.js)
+app.use("/api", userRoute);
 
 // Start the server
 app.listen(port, () => {
