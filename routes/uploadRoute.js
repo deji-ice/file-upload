@@ -21,6 +21,8 @@ const upload = multer({
   },
 });
 
+
+
 // Upload route for single file upload (test) with multer middleware
 router.post("/upload", upload.single("image"), uploadFile);
 
